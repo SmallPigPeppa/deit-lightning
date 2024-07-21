@@ -1,30 +1,15 @@
-import itertools
-import numpy as np
 import torch
-import torch.nn as nn
-import torch.nn.functional as F
-import torch.optim as optim
-from lightning import LightningModule
-from .datasets import build_dataset
-from .args import get_args_parser
-from pathlib import Path
-import argparse
-import torch
-from torch.utils.data import DataLoader
-from augment import new_data_aug_generator
 from timm.data import Mixup
 from timm.models import create_model
 from timm.optim import create_optimizer
 from timm.scheduler import create_scheduler
 from timm.loss import LabelSmoothingCrossEntropy, SoftTargetCrossEntropy
+from timm.utils import accuracy
 from losses import DistillationLoss
-from engine import train_one_epoch, evaluate
-import time
-import utils
-from timm.utils import accuracy, ModelEma
+from lightning import LightningModule
 
 
-class CLIPDualEncoderModel(LightningModule):
+class DeiTModel(LightningModule):
     def __init__(
             self,
             *args,
