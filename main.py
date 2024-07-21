@@ -1,5 +1,5 @@
 from .datasets import build_dataset
-from .args import get_args_parser
+from .deit_args import get_args_parser
 from pathlib import Path
 import argparse
 import torch

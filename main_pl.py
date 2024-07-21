@@ -7,6 +7,7 @@ from lightning.pytorch.callbacks.lr_monitor import LearningRateMonitor
 from deit_pl import DeiTModel
 from datasets import build_dataset
 from augment import new_data_aug_generator
+from deit_args import get_deit_args_parser
 
 def get_loaders(args):
     dataset_train, nb_classes = build_dataset(is_train=True, args=args)
@@ -32,13 +33,19 @@ def get_loaders(args):
 
 
 if __name__ == "__main__":
+    # lightning args
     parser = cli.LightningArgumentParser()
     parser.add_lightning_class_args(pl.Trainer, 'trainer')
     parser.add_lightning_class_args(ModelCheckpoint, "model_checkpoint")
     parser.add_lightning_class_args(LearningRateMonitor, "lr_monitor")
+
+    # deit args
+    deit_args = get_deit_args_parser()
+    parser = parser.from_argparse_args(deit_args)
     args = parser.parse_args()
 
-    trainer = pl.Trainer(args)
-    model = DeiTModel(args)
-    train_loader, val_loader = get_loaders(args)
-    trainer.fit(model, train_dataloaders=train_loader, val_dataloaders=val_loader)
+    print(args)
+    # trainer = pl.Trainer(args)
+    # model = DeiTModel(args)
+    # train_loader, val_loader = get_loaders(args)
+    # trainer.fit(model, train_dataloaders=train_loader, val_dataloaders=val_loader)
