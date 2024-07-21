@@ -211,14 +211,14 @@ if __name__ == "__main__":
 
     # print(args)
     # print(args.trainer)
+    checkpoint_callback = ModelCheckpoint(**args.model_checkpoint)
+    lr_monitor = LearningRateMonitor(**args.lr_monitor)
     wandb_logger = WandbLogger(
         name=args.name,
         project=args.project,
         offline=args.offline,
         log_model=False
     )
-    checkpoint_callback = ModelCheckpoint(**args.model_checkpoint)
-    lr_monitor = LearningRateMonitor(**args.lr_monitor)
     trainer = pl.Trainer(
         accelerator=args.accelerator,
         log_every_n_steps=args.log_every_n_steps,
