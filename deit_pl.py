@@ -104,11 +104,9 @@ class DeiTModel(LightningModule):
             loss = loss + 0.25 * self.criterion(outputs[0], outputs[1].detach().sigmoid())
             loss = loss + 0.25 * self.criterion(outputs[1], outputs[0].detach().sigmoid())
 
-        self.log('train/loss', loss.item())
+        self.log('train/loss', loss)
 
-        import pdb; pdb.set_trace()
-
-        return loss.item()
+        return loss
 
     def validation_step(self, batch, batch_idx):
         images, target = batch
@@ -117,11 +115,11 @@ class DeiTModel(LightningModule):
         loss = criterion(output, target)
         acc1, acc5 = accuracy(output, target, topk=(1, 5))
 
-        self.log('val/loss', loss.item())
-        self.log('val/acc1', acc1.item())
-        self.log('val/acc5', acc5.item())
+        self.log('val/loss', loss)
+        self.log('val/acc1', acc1)
+        self.log('val/acc5', acc5)
 
-        return loss.item()
+        return loss
 
     def configure_optimizers(self):
         optimizer = create_optimizer(self.args, self.model)
