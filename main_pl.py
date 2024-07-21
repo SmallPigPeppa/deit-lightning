@@ -200,7 +200,7 @@ if __name__ == "__main__":
     # wandb
     parser.add_argument('--name', default='debug')
     parser.add_argument('--project', default='debug')
-    parser.add_argument('--entity', default='pigpeppa')
+    # parser.add_argument('--entity', default='pigpeppa')
     parser.add_argument('--offline', action='store_true', default=False)
     parser.add_argument('--nb-classes', type=int, default=1000)
     parser.add_argument('--precision', type=int, default=16)
@@ -211,7 +211,12 @@ if __name__ == "__main__":
 
     # print(args)
     # print(args.trainer)
-    wandb_logger = WandbLogger(**args, log_model=False)
+    wandb_logger = WandbLogger(
+        name=args.name,
+        project=args.project,
+        offline=args.offline,
+        log_model=False
+    )
     checkpoint_callback = ModelCheckpoint(**args.model_checkpoint)
     lr_monitor = LearningRateMonitor(**args.lr_monitor)
     trainer = pl.Trainer(
@@ -220,7 +225,7 @@ if __name__ == "__main__":
         precision=args.precision,
         max_epochs=args.epochs,
         logger=wandb_logger,
-        callbacks=[checkpoint_callback,lr_monitor]
+        callbacks=[checkpoint_callback, lr_monitor]
     )
     model = DeiTModel(args)
     train_loader, val_loader = get_loaders(args)
