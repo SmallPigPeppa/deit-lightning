@@ -3,6 +3,9 @@ python main_pl.py \
     --name DeiT \
     --model deit_base_patch16_224 \
     --data-path /ppio_net0/torch_ds/imagenet \
+    --accelerator gpu \
+    --precision 16 \
+    --log_every_n_steps 1 \
     --lr_monitor.logging_interval epoch \
     --model_checkpoint.dirpath ckpt \
     --model_checkpoint.save_weights_only True
