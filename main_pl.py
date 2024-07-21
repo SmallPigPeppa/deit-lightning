@@ -209,8 +209,8 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    print(args)
-    print(args.trainer)
+    # print(args)
+    # print(args.trainer)
     wandb_logger = WandbLogger(**args, log_model=False)
     checkpoint_callback = ModelCheckpoint(**args.model_checkpoint)
     lr_monitor = LearningRateMonitor(**args.lr_monitor)
