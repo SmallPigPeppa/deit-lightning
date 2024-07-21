@@ -12,64 +12,65 @@ from lightning import LightningModule
 class DeiTModel(LightningModule):
     def __init__(
             self,
+            config,
             *args,
             **kwargs,
     ) -> None:
         super().__init__(*args, **kwargs)
-        self.args = args
+        self.args = config
         self.save_hyperparameters()
 
-        print(f"Creating model: {args.model}")
+        print(f"Creating model: {config.model}")
         model = create_model(
-            args.model,
+            config.model,
             pretrained=False,
-            num_classes=args.nb_classes,
-            drop_rate=args.drop,
-            drop_path_rate=args.drop_path,
+            num_classes=config.nb_classes,
+            drop_rate=config.drop,
+            drop_path_rate=config.drop_path,
             drop_block_rate=None,
-            img_size=args.input_size
+            img_size=config.input_size
         )
 
         criterion = LabelSmoothingCrossEntropy()
         mixup_fn = None
-        mixup_active = args.mixup > 0 or args.cutmix > 0. or args.cutmix_minmax is not None
+        mixup_active = config.mixup > 0 or config.cutmix > 0. or config.cutmix_minmax is not None
         if mixup_active:
             mixup_fn = Mixup(
-                mixup_alpha=args.mixup, cutmix_alpha=args.cutmix, cutmix_minmax=args.cutmix_minmax,
-                prob=args.mixup_prob, switch_prob=args.mixup_switch_prob, mode=args.mixup_mode,
-                label_smoothing=args.smoothing, num_classes=args.nb_classes)
+                mixup_alpha=config.mixup, cutmix_alpha=config.cutmix, cutmix_minmax=config.cutmix_minmax,
+                prob=config.mixup_prob, switch_prob=config.mixup_switch_prob, mode=config.mixup_mode,
+                label_smoothing=config.smoothing, num_classes=config.nb_classes)
 
         if mixup_active:
             # smoothing is handled with mixup label transform
             criterion = SoftTargetCrossEntropy()
-        elif args.smoothing:
-            criterion = LabelSmoothingCrossEntropy(smoothing=args.smoothing)
+        elif config.smoothing:
+            criterion = LabelSmoothingCrossEntropy(smoothing=config.smoothing)
         else:
             criterion = torch.nn.CrossEntropyLoss()
 
-        if args.bce_loss:
+        if config.bce_loss:
             criterion = torch.nn.BCEWithLogitsLoss()
 
         teacher_model = None
-        if args.distillation_type != 'none':
-            assert args.teacher_path, 'need to specify teacher-path when using distillation'
-            print(f"Creating teacher model: {args.teacher_model}")
+        if config.distillation_type != 'none':
+            assert config.teacher_path, 'need to specify teacher-path when using distillation'
+            print(f"Creating teacher model: {config.teacher_model}")
             teacher_model = create_model(
-                args.teacher_model,
+                config.teacher_model,
                 pretrained=False,
-                num_classes=args.nb_classes,
+                num_classes=config.nb_classes,
                 global_pool='avg',
             )
-            if args.teacher_path.startswith('https'):
+            if config.teacher_path.startswith('https'):
                 checkpoint = torch.hub.load_state_dict_from_url(
-                    args.teacher_path, map_location='cpu', check_hash=True)
+                    config.teacher_path, map_location='cpu', check_hash=True)
             else:
-                checkpoint = torch.load(args.teacher_path, map_location='cpu')
+                checkpoint = torch.load(config.teacher_path, map_location='cpu')
             teacher_model.load_state_dict(checkpoint['model'])
             teacher_model.eval()
 
         criterion = DistillationLoss(
-            criterion, teacher_model, args.distillation_type, args.distillation_alpha, args.distillation_tau
+            criterion, teacher_model, config.distillation_type, config.distillation_alpha, config.distillation_tau
         )
 
         # add
