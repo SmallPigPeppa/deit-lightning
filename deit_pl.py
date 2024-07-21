@@ -106,6 +106,8 @@ class DeiTModel(LightningModule):
 
         self.log('train/loss', loss.item())
 
+        import pdb; pdb.set_trace()
+
         return loss.item()
 
     def validation_step(self, batch, batch_idx):
