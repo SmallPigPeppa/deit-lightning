@@ -223,5 +223,5 @@ if __name__ == "__main__":
         callbacks=[checkpoint_callback,lr_monitor]
     )
     model = DeiTModel(args)
-    # train_loader, val_loader = get_loaders(args)
+    train_loader, val_loader = get_loaders(args)
     # trainer.fit(model, train_dataloaders=train_loader, val_dataloaders=val_loader)
