@@ -208,9 +208,12 @@ if __name__ == "__main__":
 
     print(args)
     print(args.trainer)
-    trainer = pl.Trainer(**args.trainer)
     checkpoint_callback = ModelCheckpoint(**args.model_checkpoint)
-    wandb_logger = WandbLogger(**args)
+    wandb_logger = WandbLogger(**args, log_model=False)
+    lr_monitor = LearningRateMonitor(**args.lr_monitor)
+    # args.trainer.logger = wandb_logger
+    # args.callbacks = [checkpoint_callback, lr_monitor]
+    trainer = pl.Trainer(**args.trainer)
     model = DeiTModel(args)
-    train_loader, val_loader = get_loaders(args)
+    # train_loader, val_loader = get_loaders(args)
     # trainer.fit(model, train_dataloaders=train_loader, val_dataloaders=val_loader)

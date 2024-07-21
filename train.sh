@@ -1,14 +1,12 @@
 python main_pl.py \
+    --project DeiT-PL \
+    --name DeiT \
     --model deit_base_patch16_224 \
     --data-path /ppio_net0/torch_ds/imagenet \
     --trainer.accelerator gpu \
     --trainer.precision 16 \
     --trainer.max_epochs 20 \
     --trainer.log_every_n_steps 1 \
-    --trainer.logger WandbLogger \
-    --trainer.logger.project DeiT-PL \
-    --trainer.logger.name DeiT \
-    --trainer.logger.log_model False \
     --lr_monitor.logging_interval epoch \
     --model_checkpoint.dirpath ckpt \
     --model_checkpoint.save_weights_only True
