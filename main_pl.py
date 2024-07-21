@@ -203,17 +203,25 @@ if __name__ == "__main__":
     parser.add_argument('--entity', default='pigpeppa')
     parser.add_argument('--offline', action='store_true', default=False)
     parser.add_argument('--nb-classes', type=int, default=1000)
+    parser.add_argument('--precision', type=int, default=16)
+    parser.add_argument('--log_every_n_steps', type=int, default=1)
+    parser.add_argument('--accelerator', default='gpu')
 
     args = parser.parse_args()
 
     print(args)
     print(args.trainer)
-    checkpoint_callback = ModelCheckpoint(**args.model_checkpoint)
     wandb_logger = WandbLogger(**args, log_model=False)
+    checkpoint_callback = ModelCheckpoint(**args.model_checkpoint)
     lr_monitor = LearningRateMonitor(**args.lr_monitor)
-    args.trainer.logger = wandb_logger
-    args.callbacks = [checkpoint_callback, lr_monitor]
-    trainer = pl.Trainer(**args.trainer)
+    trainer = pl.Trainer(
+        accelerator=args.accelerator,
+        log_every_n_steps=args.log_every_n_steps,
+        precision=args.precision,
+        max_epochs=args.epochs,
+        logger=wandb_logger,
+        callbacks=[checkpoint_callback,lr_monitor]
+    )
     model = DeiTModel(args)
     # train_loader, val_loader = get_loaders(args)
     # trainer.fit(model, train_dataloaders=train_loader, val_dataloaders=val_loader)
