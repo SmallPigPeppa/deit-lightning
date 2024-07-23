@@ -8,7 +8,9 @@ from lightning.pytorch.loggers import WandbLogger
 from deit_pl import DeiTModel
 from datasets import build_dataset
 from augment import new_data_aug_generator
-from deit_args import get_deit_args_parser
+import os
+
+os.environ['CURL_CA_BUNDLE'] = ''
 
 
 def get_loaders(config):
