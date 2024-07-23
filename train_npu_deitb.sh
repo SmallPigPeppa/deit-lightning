@@ -1,7 +1,7 @@
 python main_pl.py \
     --project DeiT-PL \
-    --name deit_small_patch16_224 \
-    --model deit_small_patch16_224 \
+    --name deit_base_patch16_224 \
+    --model deit_base_patch16_224 \
     --accelerator npu \
     --batch-size 256 \
     --precision 16 \
