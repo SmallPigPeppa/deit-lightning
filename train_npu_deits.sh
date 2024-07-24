@@ -1,4 +1,4 @@
-MODEL_NAME=deit_base_patch16_224
+MODEL_NAME=deit_small_patch16_224
 python main_pl.py \
     --project DeiT-PL \
     --name ${MODEL_NAME} \
