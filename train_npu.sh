@@ -9,4 +9,4 @@ python main_pl.py \
     --lr_monitor.logging_interval epoch \
     --model_checkpoint.dirpath ckpt \
     --model_checkpoint.save_weights_only True \
-    --data-path /home/ma-user/work/wenzhuoliu/torch_ds/imagenet
+    --data-path /home/ma-user/work/dataset/all/torch_ds/imagenet

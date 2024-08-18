@@ -10,4 +10,4 @@ python main_pl.py \
     --model_checkpoint.dirpath ckpt \
     --model_checkpoint.save_weights_only True \
     --model_checkpoint.filename ${MODEL_NAME}-bs64\
-    --data-path /home/ma-user/work/wenzhuoliu/torch_ds/imagenet
+    --data-path /home/ma-user/work/dataset/all/torch_ds/imagenet
