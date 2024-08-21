@@ -208,6 +208,7 @@ if __name__ == "__main__":
     parser.add_argument('--precision', type=int, default=16)
     parser.add_argument('--log_every_n_steps', type=int, default=1)
     parser.add_argument('--accelerator', default='gpu')
+    parser.add_argument('--num_nodes', type=int, default=1)
 
     args = parser.parse_args()
 
@@ -223,6 +224,7 @@ if __name__ == "__main__":
     )
     trainer = pl.Trainer(
         accelerator=args.accelerator,
+        num_nodes=args.num_nodes,
         log_every_n_steps=args.log_every_n_steps,
         precision=args.precision,
         max_epochs=args.epochs,
