@@ -4,6 +4,7 @@ python main_pl.py \
     --name ${MODEL_NAME} \
     --model ${MODEL_NAME} \
     --accelerator npu \
+    --sync_batchnorm \
     --batch-size 256 \
     --precision 16 \
     --log_every_n_steps 1 \

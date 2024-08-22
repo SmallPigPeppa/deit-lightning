@@ -209,6 +209,7 @@ if __name__ == "__main__":
     parser.add_argument('--log_every_n_steps', type=int, default=1)
     parser.add_argument('--accelerator', default='gpu')
     parser.add_argument('--num_nodes', type=int, default=1)
+    parser.add_argument('--sync_batchnorm', action='store_true', default=False)
 
     args = parser.parse_args()
 
@@ -229,7 +230,8 @@ if __name__ == "__main__":
         precision=args.precision,
         max_epochs=args.epochs,
         logger=wandb_logger,
-        callbacks=[checkpoint_callback, lr_monitor]
+        callbacks=[checkpoint_callback, lr_monitor],
+        sync_batchnorm=args.sync_batchnorm,
     )
     model = DeiTModel(args)
     train_loader, val_loader = get_loaders(args)
