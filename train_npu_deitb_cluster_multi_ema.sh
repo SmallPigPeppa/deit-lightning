@@ -1,7 +1,7 @@
 MODEL_NAME=deit_base_patch16_224
-python main_pl.py \
+python main_pl_ema.py \
     --project DeiT-PL \
-    --name ${MODEL_NAME} \
+    --name ${MODEL_NAME}-EMA \
     --model ${MODEL_NAME} \
     --offline \
     --accelerator npu \
