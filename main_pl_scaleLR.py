@@ -209,11 +209,16 @@ if __name__ == "__main__":
     parser.add_argument('--log_every_n_steps', type=int, default=1)
     parser.add_argument('--accelerator', default='gpu')
     parser.add_argument('--num_nodes', type=int, default=1)
+    parser.add_argument('--devices', type=int, default=8)
     parser.add_argument('--sync_batchnorm', action='store_true', default=False)
 
     args = parser.parse_args()
 
-
+    # scale learning rate
+    if not args.unscale_lr:
+        scale_factor = args.batch_size * args.devices * args.num_nodes / 512.0
+        linear_scaled_lr = args.lr * scale_factor
+        args.lr = linear_scaled_lr
 
     # print(args)
     # print(args.trainer)
