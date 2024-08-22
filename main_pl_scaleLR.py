@@ -232,6 +232,7 @@ if __name__ == "__main__":
     )
     trainer = pl.Trainer(
         accelerator=args.accelerator,
+        devices=args.devices,
         num_nodes=args.num_nodes,
         log_every_n_steps=args.log_every_n_steps,
         precision=args.precision,
