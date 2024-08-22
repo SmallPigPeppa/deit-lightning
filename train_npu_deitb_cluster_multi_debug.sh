@@ -6,7 +6,7 @@ python main_pl.py \
     --offline \
     --accelerator npu \
     --num_nodes ${NNODES} \
-    --lr 1e-3 \
+    --lr 2.5e-4 \
     --batch-size 256 \
     --precision 16 \
     --log_every_n_steps 1 \
