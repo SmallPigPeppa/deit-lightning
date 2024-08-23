@@ -211,6 +211,7 @@ if __name__ == "__main__":
     parser.add_argument('--num_nodes', type=int, default=1)
     parser.add_argument('--devices', type=int, default=8)
     parser.add_argument('--sync_batchnorm', action='store_true', default=False)
+    parser.add_argument('--ckpt_path', default='ckpt/deit_base_patch16_224-v1.ckpt')
 
     args = parser.parse_args()
 
@@ -243,5 +244,5 @@ if __name__ == "__main__":
     )
     model = DeiTModel(args)
     train_loader, val_loader = get_loaders(args)
-    trainer.test(model, val_loader, 'ckpt/deit_base_patch16_224-v1.ckpt')
+    trainer.test(model, val_loader, args.ckpt_path)
     # trainer.fit(model, train_dataloaders=train_loader, val_dataloaders=val_loader)
