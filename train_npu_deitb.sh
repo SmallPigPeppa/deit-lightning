@@ -1,7 +1,7 @@
 MODEL_NAME=deit_base_patch16_224
 python main_pl.py \
     --project DeiT-PL \
-    --name ${MODEL_NAME} \
+    --name ${MODEL_NAME}-webstudio \
     --model ${MODEL_NAME} \
     --accelerator npu \
     --sync_batchnorm \
