@@ -8,6 +8,7 @@ python main_pl_scaleLR.py \
     --devices ${NGPUS_PER_NODE} \
     --num_nodes ${NNODES} \
     --precision 16 \
+    --sync_batchnorm \
     --log_every_n_steps 1 \
     --lr_monitor.logging_interval epoch \
     --model_checkpoint.dirpath ckpt \
