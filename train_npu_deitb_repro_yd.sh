@@ -3,7 +3,6 @@ python main_pl_scaleLR.py \
     --project DeiT-PL \
     --name ${MODEL_NAME}-REPRO-YD \
     --model ${MODEL_NAME} \
-    --offline \
     --accelerator npu \
     --devices 8 \
     --batch-size 128 \
