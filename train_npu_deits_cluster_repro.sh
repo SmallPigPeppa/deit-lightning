@@ -1,7 +1,7 @@
 MODEL_NAME=deit_small_patch16_224
 python main_pl_scaleLR.py \
     --project DeiT-PL \
-    --name ${MODEL_NAME}-REPRO \
+    --name ${MODEL_NAME}-REPRO-syncBN \
     --model ${MODEL_NAME} \
     --offline \
     --accelerator npu \
