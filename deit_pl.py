@@ -121,6 +121,20 @@ class DeiTModel(LightningModule):
 
         return loss
 
+    def test_step(self, batch, batch_idx):
+        images, target = batch
+        criterion = torch.nn.CrossEntropyLoss()
+        output = self.model(images)
+        loss = criterion(output, target)
+        acc1, acc5 = accuracy(output, target, topk=(1, 5))
+
+        self.log('test/loss', loss)
+        self.log('test/acc1', acc1)
+        self.log('test/acc5', acc5)
+
+        return loss
+
+
     def configure_optimizers(self):
         optimizer = create_optimizer(self.args, self.model)
         lr_scheduler, _ = create_scheduler(self.args, optimizer)
