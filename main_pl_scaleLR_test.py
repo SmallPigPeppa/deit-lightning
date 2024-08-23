@@ -243,5 +243,5 @@ if __name__ == "__main__":
     )
     model = DeiTModel(args)
     train_loader, val_loader = get_loaders(args)
-    trainer.test(model, val_loader, 'ckpt/deit_base_patch16_224.ckpt')
+    trainer.test(model, val_loader, 'ckpt/deit_base_patch16_224-v1.ckpt')
     # trainer.fit(model, train_dataloaders=train_loader, val_dataloaders=val_loader)
