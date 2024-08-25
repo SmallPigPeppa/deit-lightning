@@ -1,0 +1,25 @@
+MODEL_NAME=deit_base_patch16_224
+python main_pl_ema.py \
+    --project DeiT-PL \
+    --name ${MODEL_NAME}-torch \
+    --model ${MODEL_NAME} \
+    --offline \
+    --accelerator npu \
+    --num_nodes ${NNODES} \
+    --batch-size 512 \
+    --lr 0.003 \
+    --warmup-lr 0.0001\
+    --min-lr 0.0001 \
+    --warmup-epochs 30 \
+    --weight-decay 0.3\
+    --precision 16 \
+    --smoothing 0.11 \
+    --mixup 0.2 \
+    --gradient_clip_val 1 \
+    --cutmix-alpha 1.0 \
+    --log_every_n_steps 1 \
+    --lr_monitor.logging_interval epoch \
+    --model_checkpoint.dirpath ckpt \
+    --model_checkpoint.save_weights_only True \
+    --model_checkpoint.filename ${MODEL_NAME}\
+    --data-path /opt/huawei/dataset/all/torch_ds/imagenet
