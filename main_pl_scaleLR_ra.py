@@ -183,7 +183,7 @@ if __name__ == "__main__":
 
     # scale learning rate
     if not args.unscale_lr:
-        scale_factor = args.batch_size * args.devices * args.num_nodes / 512.0
+        scale_factor = args.batch_size * args.trainer.devices * args.trainer.num_nodes / 512.0
         linear_scaled_lr = args.lr * scale_factor
         args.lr = linear_scaled_lr
 
