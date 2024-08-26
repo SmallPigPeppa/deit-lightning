@@ -1,40 +1,13 @@
-import torch
-from torch.utils.data import DataLoader
 import lightning as pl
 from lightning.pytorch import cli
 from lightning.pytorch.callbacks.model_checkpoint import ModelCheckpoint
 from lightning.pytorch.callbacks.lr_monitor import LearningRateMonitor
 from lightning.pytorch.loggers import WandbLogger
 from deit_pl import DeiTModel
-from datasets import build_dataset
-from augment import new_data_aug_generator
+from lightning_dm.deit_dm import CustomDataModule
 import os
 
 os.environ['CURL_CA_BUNDLE'] = ''
-
-
-def get_loaders(config):
-    dataset_train, nb_classes = build_dataset(is_train=True, args=config)
-    dataset_val, _ = build_dataset(is_train=False, args=config)
-    data_loader_train = torch.utils.data.DataLoader(
-        dataset_train,
-        batch_size=config.batch_size,
-        num_workers=config.num_workers,
-        pin_memory=config.pin_mem,
-        drop_last=True,
-    )
-    if config.ThreeAugment:
-        data_loader_train.dataset.transform = new_data_aug_generator(config)
-
-    data_loader_val = torch.utils.data.DataLoader(
-        dataset_val,
-        batch_size=int(1.5 * config.batch_size),
-        num_workers=config.num_workers,
-        pin_memory=config.pin_mem,
-        drop_last=False
-    )
-    return data_loader_train, data_loader_val
-
 
 if __name__ == "__main__":
     # lightning args
@@ -205,12 +178,6 @@ if __name__ == "__main__":
     # parser.add_argument('--entity', default='pigpeppa')
     parser.add_argument('--offline', action='store_true', default=False)
     parser.add_argument('--nb-classes', type=int, default=1000)
-    parser.add_argument('--precision', type=int, default=16)
-    parser.add_argument('--log_every_n_steps', type=int, default=1)
-    parser.add_argument('--accelerator', default='gpu')
-    parser.add_argument('--num_nodes', type=int, default=1)
-    parser.add_argument('--devices', type=int, default=8)
-    parser.add_argument('--sync_batchnorm', action='store_true', default=False)
 
     args = parser.parse_args()
 
@@ -220,8 +187,7 @@ if __name__ == "__main__":
         linear_scaled_lr = args.lr * scale_factor
         args.lr = linear_scaled_lr
 
-    # print(args)
-    # print(args.trainer)
+
     checkpoint_callback = ModelCheckpoint(**args.model_checkpoint)
     lr_monitor = LearningRateMonitor(**args.lr_monitor)
     wandb_logger = WandbLogger(
@@ -230,17 +196,20 @@ if __name__ == "__main__":
         offline=args.offline,
         log_model=False
     )
+
+    # Remove logger and callbacks from args.trainer to avoid conflict
+    trainer_args = {key: value for key, value in args.trainer.items() if key not in ['logger', 'callbacks']}
+
+    # Add max_epochs from args.epochs
+    trainer_args['max_epochs'] = args.epochs
+
+    # Instantiate the Trainer
     trainer = pl.Trainer(
-        accelerator=args.accelerator,
-        devices=args.devices,
-        num_nodes=args.num_nodes,
-        log_every_n_steps=args.log_every_n_steps,
-        precision=args.precision,
-        max_epochs=args.epochs,
+        **trainer_args,
         logger=wandb_logger,
         callbacks=[checkpoint_callback, lr_monitor],
-        sync_batchnorm=args.sync_batchnorm,
     )
+
     model = DeiTModel(args)
-    train_loader, val_loader = get_loaders(args)
-    trainer.fit(model, train_dataloaders=train_loader, val_dataloaders=val_loader)
+    dm = CustomDataModule(args)
+    trainer.fit(model, datamodule=dm)
