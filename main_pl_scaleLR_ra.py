@@ -178,8 +178,12 @@ if __name__ == "__main__":
     # parser.add_argument('--entity', default='pigpeppa')
     parser.add_argument('--offline', action='store_true', default=False)
     parser.add_argument('--nb-classes', type=int, default=1000)
+    parser.add_argument(
+        "--ra-reps", default=3, type=int, help="number of repetitions for Repeated Augmentation (default: 3)"
+    )
 
     args = parser.parse_args()
+    pl.seed_everything(args.seed)
 
     # scale learning rate
     if not args.unscale_lr:
