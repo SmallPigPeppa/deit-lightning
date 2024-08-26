@@ -1,5 +1,6 @@
 MODEL_NAME=deit_base_patch16_224
 python main_pl_scaleLR_ra.py \
+    --seed 3407 \
     --project DeiT-PL \
     --name ${MODEL_NAME}-REPRO-RA \
     --model ${MODEL_NAME} \
