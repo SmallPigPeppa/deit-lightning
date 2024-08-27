@@ -3,7 +3,6 @@ python main_pl_scaleLR_test.py \
     --project DeiT-PL-test \
     --name ${MODEL_NAME}-REPRO \
     --model ${MODEL_NAME} \
-    --offline \
     --accelerator npu \
     --devices 8 \
     --num_nodes 1 \
