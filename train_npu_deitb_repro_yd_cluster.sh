@@ -1,7 +1,7 @@
 MODEL_NAME=deit_base_patch16_224
 python main_pl_scaleLR.py \
     --project DeiT-PL \
-    --name ${MODEL_NAME}-REPRO-YD-webstudio \
+    --name ${MODEL_NAME}-REPRO-YD-v\
     --model ${MODEL_NAME} \
     --offline \
     --accelerator npu \
