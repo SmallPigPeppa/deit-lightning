@@ -2,7 +2,7 @@ MODEL_NAME=deit_small_patch16_224
 python main_pl_scaleLR_ra.py \
     --seed 3407 \
     --project DeiT-PL \
-    --name ${MODEL_NAME}-REPRO-YD-RA \
+    --name ${MODEL_NAME}-REPRO-YD-RA-V \
     --model ${MODEL_NAME} \
     --offline \
     --batch-size 128 \
