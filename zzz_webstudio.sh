@@ -5,6 +5,7 @@ python main_pl_scaleLR_ra.py \
     --project None \
     --name ${MODEL_NAME}-REPRO-YD-RA \
     --model ${MODEL_NAME} \
+    --offline \
     --batch-size 128 \
     --trainer.accelerator npu \
     --trainer.devices 8 \
