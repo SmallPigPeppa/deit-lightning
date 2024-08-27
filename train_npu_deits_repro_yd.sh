@@ -1,7 +1,7 @@
 MODEL_NAME=deit_small_patch16_224
 python main_pl_scaleLR.py \
     --project DeiT-PL \
-    --name ${MODEL_NAME}-REPRO-YD \
+    --name ${MODEL_NAME}-REPRO-YD-V \
     --model ${MODEL_NAME} \
     --accelerator npu \
     --devices 8 \
