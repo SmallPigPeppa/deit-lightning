@@ -12,3 +12,4 @@ python main_pl.py \
     --model_checkpoint.save_weights_only True \
     --model_checkpoint.filename ${MODEL_NAME}\
     --data-path /home/ma-user/work/dataset/all/torch_ds/imagenet
+
