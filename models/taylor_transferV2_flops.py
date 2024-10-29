@@ -1,4 +1,5 @@
 import math
+
 try:
     from typing import Literal
 except ImportError:
@@ -74,10 +75,10 @@ class TaylorAttention(nn.Module):
         qk_matmul = q @ k.transpose(-2, -1)
 
         attn = torch.ones_like(qk_matmul)  # 泰勒展开初始值为 1
-        # x_power = qk_matmul.clone()
+        x_power = qk_matmul.clone()
 
-        # for i in range(1, self.order + 1):
-        #     attn = attn + x_power / math.factorial(i)
+        for i in range(1, self.order + 1):
+            attn = attn + x_power * 0.5
         #     if i < self.order:  # 避免多计算一次下一个次幂
         #         x_power = x_power * qk_matmul  # 下一个次幂
 
@@ -90,6 +91,7 @@ class TaylorAttention(nn.Module):
         x = self.proj(x)
         x = self.proj_drop(x)
         return x
+
 
 def convert_attention_to_taylor(attention_module: nn.Module, order: int = 1) -> nn.Module:
     """
@@ -242,7 +244,6 @@ if __name__ == "__main__":
 #     # Compare the forward speed of the original and modified models
 #     input_tensor = torch.randn(64, 3, 224, 224)  # Example input tensor
 #     compare_model_forward_speed(vit_model_taylor, vit_model, input_tensor)
-
 
 
 # if __name__ == "__main__":
