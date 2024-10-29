@@ -71,8 +71,8 @@ class TaylorAttention(nn.Module):
         q, k = self.q_norm(q), self.k_norm(k)
 
         q = q * self.scale
-        # qk_matmul = torch.matmul(q, k.transpose(-2, -1))
-        qk_matmul = q @ k.transpose(-2, -1)
+        qk_matmul = torch.matmul(q, k.transpose(-2, -1))
+        # qk_matmul = q @ k.transpose(-2, -1)
 
         attn = torch.ones_like(qk_matmul)  # 泰勒展开初始值为 1
         x_power = qk_matmul.clone()
@@ -179,7 +179,7 @@ def count_flops(model: nn.Module, input_size=(3, 224, 224)):
     print(f"Parameters: {params / 1e6:.2f} M")
     return flops
 
-def compare_model_forward_speed(model1: nn.Module, model2: nn.Module, input_tensor: torch.Tensor, num_iterations: int = 100) -> None:
+def compare_model_forward_speed(model1: nn.Module, model2: nn.Module, input_tensor: torch.Tensor, num_iterations: int = 5) -> None:
     """
     Compare the forward computation speed of two models.
 
