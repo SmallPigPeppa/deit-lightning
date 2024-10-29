@@ -4,6 +4,7 @@ import math
 from collections import OrderedDict
 from functools import partial
 from typing import Any, Callable, Dict, Optional, Set, Tuple, Type, Union, List
+
 try:
     from typing import Literal
 except ImportError:
@@ -28,6 +29,33 @@ from timm.models._registry import generate_default_cfgs, register_model, registe
 __all__ = ['VisionTransformer']  # model_registry will add each entrypoint fn to this
 
 _logger = logging.getLogger(__name__)
+
+
+def convert_attention_to_taylor(attention_module: nn.Module, order: int = 1) -> nn.Module:
+    """
+    Convert an OriginalAttention module to a TaylorAttention module with the specified order.
+
+    Args:
+        attention_module (nn.Module): The original attention module to convert.
+        order (int): The order of the Taylor series expansion.
+
+    Returns:
+        nn.Module: The converted TaylorAttention module.
+    """
+    if not isinstance(attention_module, OriginalAttention):
+        raise TypeError("Input module must be an instance of OriginalAttention")
+
+    return TaylorAttention(
+        dim=attention_module.qkv.in_features,
+        num_heads=attention_module.num_heads,
+        order=order,
+        qkv_bias=attention_module.qkv.bias is not None,
+        qk_norm=isinstance(attention_module.q_norm, nn.LayerNorm),
+        attn_drop=attention_module.attn_drop.p,
+        proj_drop=attention_module.proj_drop.p,
+        norm_layer=type(attention_module.q_norm) if isinstance(attention_module.q_norm, nn.LayerNorm) else nn.Identity
+    )
+
 
 class TaylorAttention(nn.Module):
     fused_attn: Final[bool]
@@ -84,6 +112,7 @@ class TaylorAttention(nn.Module):
         # x = self.proj_drop(x)
         return x
 
+
 class OriginalAttention(nn.Module):
     fused_attn: Final[bool]
 
@@ -117,12 +146,6 @@ class OriginalAttention(nn.Module):
         q, k, v = qkv.unbind(0)
         q, k = self.q_norm(q), self.k_norm(k)
 
-        # if self.fused_attn:
-        #     x = F.scaled_dot_product_attention(
-        #         q, k, v,
-        #         dropout_p=self.attn_drop.p if self.training else 0.,
-        #     )
-        # else:
         q = q * self.scale
         attn = q @ k.transpose(-2, -1)
         attn = attn.softmax(dim=-1)
@@ -134,13 +157,15 @@ class OriginalAttention(nn.Module):
         # x = self.proj_drop(x)
         return x
 
+
 # 测试运行
 if __name__ == "__main__":
     torch.manual_seed(0)
     import time
+
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    device="cpu"
-    device="cuda"
+    device = "cpu"
+    # device="cuda"
     x = torch.randn(64, 128, 512).to(device)  # [batch_size, seq_len, dim]
 
     # 原始注意力机制
@@ -150,17 +175,10 @@ if __name__ == "__main__":
     original_time = time.time() - start_time
     print(f"Original Attention Output Shape: {output_original.shape}, Time: {original_time:.6f} seconds")
 
-    # 1～3 阶泰勒展开的注意力机制
-    # for order in range(1, 5):
-    #     taylor_attn = TaylorAttention(dim=512, num_heads=8, order=order).to(device)
-    #     start_time = time.time()
-    #     output_taylor = taylor_attn(x)
-    #     taylor_time = time.time() - start_time
-    #     print(f"Order {order} Taylor Attention Output Shape: {output_taylor.shape}, Time: {taylor_time:.6f} seconds")
-
-    order=5
-    taylor_attn = TaylorAttention(dim=512, num_heads=8, order=order).to(device)
+    # 将原始注意力机制转换为泰勒注意力机制
+    taylor_attn_converted = convert_attention_to_taylor(original_attn, order=19).to(device)
     start_time = time.time()
-    output_taylor = taylor_attn(x)
-    taylor_time = time.time() - start_time
-    print(f"Order {order} Taylor Attention Output Shape: {output_taylor.shape}, Time: {taylor_time:.6f} seconds")
+    output_taylor_converted = taylor_attn_converted(x)
+    taylor_converted_time = time.time() - start_time
+    print(
+        f"Converted Taylor Attention Output Shape: {output_taylor_converted.shape}, Time: {taylor_converted_time:.6f} seconds")
