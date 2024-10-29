@@ -179,6 +179,37 @@ def count_flops(model: nn.Module, input_size=(3, 224, 224)):
     print(f"Parameters: {params / 1e6:.2f} M")
     return flops
 
+def compare_model_forward_speed(model1: nn.Module, model2: nn.Module, input_tensor: torch.Tensor, num_iterations: int = 100) -> None:
+    """
+    Compare the forward computation speed of two models.
+
+    Args:
+        model1 (nn.Module): The first model to compare.
+        model2 (nn.Module): The second model to compare.
+        input_tensor (torch.Tensor): The input tensor for the models.
+        num_iterations (int): The number of iterations to run for comparison.
+    """
+    import time
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    model1 = model1.to(device)
+    model2 = model2.to(device)
+    input_tensor = input_tensor.to(device)
+
+    # Measure model1 forward speed
+    start_time = time.time()
+    for _ in range(num_iterations):
+        _ = model1(input_tensor)
+    model1_time = time.time() - start_time
+
+    # Measure model2 forward speed
+    start_time = time.time()
+    for _ in range(num_iterations):
+        _ = model2(input_tensor)
+    model2_time = time.time() - start_time
+
+    print(f"Model 1 average forward time: {model1_time / num_iterations:.6f} seconds")
+    print(f"Model 2 average forward time: {model2_time / num_iterations:.6f} seconds")
+
 
 # Modify or add other parts of the code as needed
 
@@ -197,6 +228,10 @@ if __name__ == "__main__":
 
     print("Modified Taylor Model FLOPs:")
     count_flops(vit_model_taylor, input_size=(3, 224, 224))
+
+
+    input_tensor = torch.randn(64, 3, 224, 224)  # Example input tensor
+    compare_model_forward_speed(vit_model, vit_model_taylor, input_tensor)
 
 # def compare_model_forward_speed(model1: nn.Module, model2: nn.Module, input_tensor: torch.Tensor, num_iterations: int = 100) -> None:
 #     """
