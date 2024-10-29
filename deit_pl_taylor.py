@@ -8,6 +8,7 @@ from timm.utils import accuracy
 from losses import DistillationLoss
 from lightning import LightningModule
 from models.vision_transformer import vit_small_patch16_224
+from models.taylor_transfer import replace_attention_with_taylor_by_index
 
 
 class DeiTModel(LightningModule):
@@ -32,6 +33,9 @@ class DeiTModel(LightningModule):
         #     img_size=config.input_size
         # )
         model = vit_small_patch16_224(pretrained=True)
+        indices_to_replace = list(range(0, 1))  # Example indices
+        order = 1  # Taylor expansion order
+        model = replace_attention_with_taylor_by_index(model, indices_to_replace, order)
 
         criterion = LabelSmoothingCrossEntropy()
         mixup_fn = None
