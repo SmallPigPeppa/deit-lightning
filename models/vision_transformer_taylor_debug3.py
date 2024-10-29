@@ -46,6 +46,14 @@ if __name__ == "__main__":
     start_time = time.time()
     output_original = original_attn(x)
     original_time = time.time() - start_time
+    # print(f"Original Attention Output Shape: {output_original.shape}, Time: {original_time:.6f} seconds")
+
+
+    # 原始注意力机制
+    original_attn = OriginalAttention(dim=512, num_heads=8).to(device)
+    start_time = time.time()
+    output_original = original_attn(x)
+    original_time = time.time() - start_time
     print(f"Original Attention Output Shape: {output_original.shape}, Time: {original_time:.6f} seconds")
 
     # 1～3 阶泰勒展开的注意力机制
