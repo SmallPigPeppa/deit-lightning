@@ -10,8 +10,8 @@ import torch.nn.functional as F
 import torch.utils.checkpoint
 from torch.jit import Final
 from timm.layers import use_fused_attn
-from .vision_transformer import vit_small_patch16_224
-from .vision_transformer import Attention
+from models.vision_transformer import vit_small_patch16_224
+from models.vision_transformer import Attention
 import copy
 
 
