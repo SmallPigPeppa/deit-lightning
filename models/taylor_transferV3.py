@@ -15,23 +15,6 @@ from models.vision_transformerV3 import Attention
 import copy
 
 
-def count_attention_layers(model: nn.Module) -> int:
-    """
-    Count the number of Attention layers in the Vision Transformer model.
-
-    Args:
-        model (nn.Module): The Vision Transformer model.
-
-    Returns:
-        int: The number of Attention layers in the model.
-    """
-    count = 0
-    for name, module in model.named_children():
-        if isinstance(module, Attention):
-            count += 1
-        else:
-            count += count_attention_layers(module)
-    return count
 
 
 class TaylorAttention(nn.Module):
@@ -81,12 +64,12 @@ class TaylorAttention(nn.Module):
 
         attn = F.relu(attn)  # ReLU 确保非负性
         attn = attn / attn.sum(dim=-1, keepdim=True)  # 归一化
-        attn = self.attn_drop(attn)
+        # attn = self.attn_drop(attn)
         x = torch.matmul(attn, v)
 
         x = x.transpose(1, 2).reshape(B, N, C)
         x = self.proj(x)
-        x = self.proj_drop(x)
+        # x = self.proj_drop(x)
         return x
 
 def convert_attention_to_taylor(attention_module: nn.Module, order: int = 1) -> nn.Module:
