@@ -78,9 +78,10 @@ class TaylorAttention(nn.Module):
         x_power = qk_matmul.clone()
 
         for i in range(1, self.order + 1):
-            attn = attn + x_power * 0.5
-        #     if i < self.order:  # 避免多计算一次下一个次幂
-        #         x_power = x_power * qk_matmul  # 下一个次幂
+            # attn = attn + x_power * 0.5
+            attn = attn + x_power / math.factorial(i)
+            if i < self.order:  # 避免多计算一次下一个次幂
+                x_power = x_power * qk_matmul  # 下一个次幂
 
         attn = F.relu(attn)  # ReLU 确保非负性
         attn = attn / attn.sum(dim=-1, keepdim=True)  # 归一化
