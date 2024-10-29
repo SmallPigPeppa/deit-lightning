@@ -8,8 +8,8 @@ from timm.utils import accuracy
 from losses import DistillationLoss
 from lightning import LightningModule
 from models.vision_transformer import vit_small_patch16_224
-from models.taylor_transfer import replace_attention_with_taylor_by_index
-from models.taylor_transferV3 import TaylorAttention
+from models.taylor_transferV2 import replace_attention_with_taylor_by_index
+from models.taylor_transferV2 import TaylorAttention
 
 
 
