@@ -145,7 +145,7 @@ if __name__ == "__main__":
     torch.manual_seed(0)
     import time
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    x = torch.randn(64, 128, 512).to(device)  # [batch_size, seq_len, dim]
+    x = torch.randn(1024, 128, 512).to(device)  # [batch_size, seq_len, dim]
 
     # 原始注意力机制
     original_attn = OriginalAttention(dim=512, num_heads=8).to(device)
