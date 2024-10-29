@@ -10,11 +10,8 @@ import torch.nn.functional as F
 import torch.utils.checkpoint
 from torch.jit import Final
 from timm.layers import use_fused_attn
-# from models.vision_transformer import vit_small_patch16_224
-# from models.vision_transformer import Attention
-from .vision_transformer import vit_small_patch16_224
-from .vision_transformer import Attention
-
+from models.vision_transformer import vit_small_patch16_224
+from models.vision_transformer import Attention
 import copy
 
 
@@ -153,7 +150,7 @@ def replace_attention_with_taylor_by_index(model, target_layer_idx, order: int =
     return model
 
 
-def compare_model_forward_speed(model1: nn.Module, model2: nn.Module, input_tensor: torch.Tensor, num_iterations: int = 10) -> None:
+def compare_model_forward_speed(model1: nn.Module, model2: nn.Module, input_tensor: torch.Tensor, num_iterations: int = 100) -> None:
     """
     Compare the forward computation speed of two models.
 
