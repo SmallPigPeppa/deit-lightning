@@ -40,12 +40,12 @@ def convert_attention_to_taylor(attention_module: nn.Module, order: int = 1) -> 
         order (int): The order of the Taylor series expansion.
 
     Returns:
-        nn.Module: The converted TaylorAttention module.
+        nn.Module: The converted TaylorAttention module with copied weights.
     """
     if not isinstance(attention_module, OriginalAttention):
         raise TypeError("Input module must be an instance of OriginalAttention")
 
-    return TaylorAttention(
+    taylor_attention = TaylorAttention(
         dim=attention_module.qkv.in_features,
         num_heads=attention_module.num_heads,
         order=order,
@@ -55,6 +55,15 @@ def convert_attention_to_taylor(attention_module: nn.Module, order: int = 1) -> 
         proj_drop=attention_module.proj_drop.p,
         norm_layer=type(attention_module.q_norm) if isinstance(attention_module.q_norm, nn.LayerNorm) else nn.Identity
     )
+
+    # Copy weights from the original attention module to the Taylor attention module
+    taylor_attention.qkv.weight.data = attention_module.qkv.weight.data.clone()
+    if attention_module.qkv.bias is not None:
+        taylor_attention.qkv.bias.data = attention_module.qkv.bias.data.clone()
+    taylor_attention.proj.weight.data = attention_module.proj.weight.data.clone()
+    taylor_attention.proj.bias.data = attention_module.proj.bias.data.clone()
+
+    return taylor_attention
 
 
 class TaylorAttention(nn.Module):
@@ -165,7 +174,7 @@ if __name__ == "__main__":
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     device = "cpu"
-    # device="cuda"
+    device="cuda"
     x = torch.randn(64, 128, 512).to(device)  # [batch_size, seq_len, dim]
 
     # 原始注意力机制
@@ -176,7 +185,7 @@ if __name__ == "__main__":
     print(f"Original Attention Output Shape: {output_original.shape}, Time: {original_time:.6f} seconds")
 
     # 将原始注意力机制转换为泰勒注意力机制
-    taylor_attn_converted = convert_attention_to_taylor(original_attn, order=19).to(device)
+    taylor_attn_converted = convert_attention_to_taylor(original_attn, order=5).to(device)
     start_time = time.time()
     output_taylor_converted = taylor_attn_converted(x)
     taylor_converted_time = time.time() - start_time
