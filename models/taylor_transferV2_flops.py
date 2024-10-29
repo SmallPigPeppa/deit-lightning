@@ -71,7 +71,7 @@ class TaylorAttention(nn.Module):
 
         q = q * self.scale
         qk_matmul = torch.matmul(q, k.transpose(-2, -1))
-        attn = torch.ones_like(qk_matmul)  # 泰勒展开初始值为 1
+        # attn = torch.ones_like(qk_matmul)  # 泰勒展开初始值为 1
         # x_power = qk_matmul.clone()
 
         # for i in range(1, self.order + 1):
