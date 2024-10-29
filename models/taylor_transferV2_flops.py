@@ -86,7 +86,8 @@ class TaylorAttention(nn.Module):
         attn = F.relu(attn)  # ReLU 确保非负性
         attn = attn / attn.sum(dim=-1, keepdim=True)  # 归一化
         attn = self.attn_drop(attn)
-        x = torch.matmul(attn, v)
+        # x = torch.matmul(attn, v)
+        x = attn @ v
 
         x = x.transpose(1, 2).reshape(B, N, C)
         x = self.proj(x)
