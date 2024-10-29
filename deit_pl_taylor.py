@@ -22,16 +22,16 @@ class DeiTModel(LightningModule):
         self.save_hyperparameters()
 
         print(f"Creating model: {config.model}")
-        model = create_model(
-            config.model,
-            pretrained=True,
-            num_classes=config.nb_classes,
-            drop_rate=config.drop,
-            drop_path_rate=config.drop_path,
-            drop_block_rate=None,
-            img_size=config.input_size
-        )
-        # model = vit_small_patch16_224(pretrained=True)
+        # model = create_model(
+        #     config.model,
+        #     pretrained=True,
+        #     num_classes=config.nb_classes,
+        #     drop_rate=config.drop,
+        #     drop_path_rate=config.drop_path,
+        #     drop_block_rate=None,
+        #     img_size=config.input_size
+        # )
+        model = vit_small_patch16_224(pretrained=True)
 
         criterion = LabelSmoothingCrossEntropy()
         mixup_fn = None
