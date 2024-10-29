@@ -1,4 +1,5 @@
 import math
+
 try:
     from typing import Literal
 except ImportError:
@@ -13,8 +14,6 @@ from timm.layers import use_fused_attn
 from models.vision_transformerV3 import vit_small_patch16_224
 from models.vision_transformerV3 import Attention
 import copy
-
-
 
 
 class TaylorAttention(nn.Module):
@@ -56,13 +55,15 @@ class TaylorAttention(nn.Module):
         qk_matmul = torch.matmul(q, k.transpose(-2, -1))
         attn = torch.ones_like(qk_matmul)  # 泰勒展开初始值为 1
         x_power = qk_matmul.clone()
+        # x_power = qk_matmul.clone()
 
         for i in range(1, self.order + 1):
-            attn = attn + x_power / math.factorial(i)
+            # attn = attn + x_power / math.factorial(i)
+            attn = attn + x_power * 0.5
             if i < self.order:  # 避免多计算一次下一个次幂
                 x_power = x_power * qk_matmul  # 下一个次幂
 
-        attn = F.relu(attn)  # ReLU 确保非负性
+        # attn = F.relu(attn)  # ReLU 确保非负性
         attn = attn / attn.sum(dim=-1, keepdim=True)  # 归一化
         # attn = self.attn_drop(attn)
         x = torch.matmul(attn, v)
@@ -71,6 +72,7 @@ class TaylorAttention(nn.Module):
         x = self.proj(x)
         # x = self.proj_drop(x)
         return x
+
 
 def convert_attention_to_taylor(attention_module: nn.Module, order: int = 1) -> nn.Module:
     """
@@ -133,7 +135,8 @@ def replace_attention_with_taylor_by_index(model, target_layer_idx, order: int =
     return model
 
 
-def compare_model_forward_speed(model1: nn.Module, model2: nn.Module, input_tensor: torch.Tensor, num_iterations: int = 100) -> None:
+def compare_model_forward_speed(model1: nn.Module, model2: nn.Module, input_tensor: torch.Tensor,
+                                num_iterations: int = 100) -> None:
     """
     Compare the forward computation speed of two models.
 
@@ -165,14 +168,12 @@ def compare_model_forward_speed(model1: nn.Module, model2: nn.Module, input_tens
     print(f"Model 2 average forward time: {model2_time / num_iterations:.6f} seconds")
 
 
-
-
-if __name__=="__main__":
+if __name__ == "__main__":
     # Example usage:
     vit_model = vit_small_patch16_224(pretrained=True)  # Assuming you have the Vision Transformer model instance
     # num_attention_layers = count_attention_layers(vit_model)
     # print(f"Number of Attention layers: {num_attention_layers}")
-    indices_to_replace = list(range(0,12))  # Example indices
+    indices_to_replace = list(range(0, 12))  # Example indices
     order = 1  # Taylor expansion order
     vit_model_taylor = replace_attention_with_taylor_by_index(vit_model, indices_to_replace, order)
     # print(vit_model)
@@ -181,8 +182,6 @@ if __name__=="__main__":
     # Compare the forward speed of the original and modified models
     input_tensor = torch.randn(64, 3, 224, 224)  # Example input tensor
     compare_model_forward_speed(vit_model, vit_model_taylor, input_tensor)
-
-
 
 # if __name__ == "__main__":
 #     torch.manual_seed(0)
