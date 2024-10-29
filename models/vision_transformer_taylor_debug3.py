@@ -30,7 +30,7 @@ __all__ = ['VisionTransformer']  # model_registry will add each entrypoint fn to
 _logger = logging.getLogger(__name__)
 
 from models.vision_transformerV3 import Attention as OriginalAttention
-from models.taylor_transferV3 import TaylorAttention
+from models.taylor_transferV2 import TaylorAttention
 
 # 测试运行
 if __name__ == "__main__":
