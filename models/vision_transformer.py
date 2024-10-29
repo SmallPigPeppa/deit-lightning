@@ -107,67 +107,6 @@ class Attention(nn.Module):
         return x
 
 
-class Attention(nn.Module):
-    fused_attn: Final[bool]
-
-    def __init__(
-            self,
-            dim: int,
-            num_heads: int = 8,
-            qkv_bias: bool = False,
-            qk_norm: bool = False,
-            attn_drop: float = 0.,
-            proj_drop: float = 0.,
-            norm_layer: nn.Module = nn.LayerNorm,
-    ) -> None:
-        super().__init__()
-        assert dim % num_heads == 0, 'dim should be divisible by num_heads'
-        self.num_heads = num_heads
-        self.head_dim = dim // num_heads
-        self.fused_attn = use_fused_attn()
-
-        self.qkv = nn.Linear(dim, dim * 3, bias=qkv_bias)
-        self.q_norm = norm_layer(self.head_dim) if qk_norm else nn.Identity()
-        self.k_norm = norm_layer(self.head_dim) if qk_norm else nn.Identity()
-        self.attn_drop = nn.Dropout(attn_drop)
-        self.proj = nn.Linear(dim, dim)
-        self.proj_drop = nn.Dropout(proj_drop)
-
-    def linear_attention(self, q: torch.Tensor, k: torch.Tensor, v: torch.Tensor) -> torch.Tensor:
-        φ = lambda x: F.elu(x) + 1  # 激活函数 φ(x) = elu(x) + 1
-        φ_q = φ(q)  # 形状: (B, num_heads, N, head_dim)
-        φ_k = φ(k)  # 形状: (B, num_heads, N, head_dim)
-
-        # 计算上下文矩阵 S
-        # S 的形状: (B, num_heads, head_dim, head_dim)
-        S = torch.einsum('bhnd,bhne->bhde', φ_k, v)
-
-        # 计算归一化因子 Z
-        # Z 的形状: (B, num_heads, N)
-        Z = 1 / torch.einsum('bhnd,bhd->bhn', φ_q, φ_k.sum(dim=2) + 1e-6)
-
-        # 计算输出 x
-        # x 的形状: (B, num_heads, N, head_dim)
-        x = torch.einsum('bhnd,bhde,bhn->bhne', φ_q, S, Z)
-
-        return x
-
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
-        B, N, C = x.shape
-        qkv = self.qkv(x).reshape(B, N, 3, self.num_heads, self.head_dim)\
-                         .permute(2, 0, 3, 1, 4)
-        q, k, v = qkv.unbind(0)  # 每个的形状: (B, num_heads, N, head_dim)
-        q, k = self.q_norm(q), self.k_norm(k)
-
-        # 使用线性注意力机制
-        x = self.linear_attention(q, k, v)
-
-        x = x.transpose(1, 2).reshape(B, N, C)
-        x = self.proj(x)
-        x = self.proj_drop(x)
-        return x
-
-
 class LayerScale(nn.Module):
     def __init__(
             self,
