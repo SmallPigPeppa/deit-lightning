@@ -58,6 +58,7 @@ if __name__ == "__main__":
 
     order=5
     taylor_attn = TaylorAttention(dim=512, num_heads=8, order=order).to(device)
+    taylor_attn = OriginalAttention(dim=512, num_heads=8).to(device)
     start_time = time.time()
     output_taylor = taylor_attn(x)
     taylor_time = time.time() - start_time
