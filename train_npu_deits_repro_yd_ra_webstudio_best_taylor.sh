@@ -16,4 +16,4 @@ python main_pl_scaleLR_ra_taylor.py \
     --model_checkpoint.dirpath ckpt \
     --model_checkpoint.save_weights_only True \
     --model_checkpoint.filename ${MODEL_NAME}\
-    --data-path /home/ma-user/work/wenzhuoliu/torch_ds/imagenet
+    --data-path /home/ma-user/work/dataset/all/torch_ds/imagenet
