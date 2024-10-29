@@ -46,6 +46,7 @@ class DeiTModel(LightningModule):
 
         # Enable gradients only for TaylorAttention layers in the specified blocks
         for i, block in enumerate(model.blocks):
+            import pdb;pdb.set_trace()
             if hasattr(block, 'attn') and isinstance(block.attn, TaylorAttention) and i in indices_to_replace:
                 for param in block.attn.parameters():
                     param.requires_grad = True
