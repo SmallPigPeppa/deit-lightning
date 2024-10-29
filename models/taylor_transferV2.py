@@ -79,7 +79,7 @@ class TaylorAttention(nn.Module):
             if i < self.order:  # 避免多计算一次下一个次幂
                 x_power = x_power * qk_matmul  # 下一个次幂
 
-        attn = F.relu(attn)  # ReLU 确保非负性
+        # attn = F.relu(attn)  # ReLU 确保非负性
         attn = attn / attn.sum(dim=-1, keepdim=True)  # 归一化
         attn = self.attn_drop(attn)
         x = attn @ v
