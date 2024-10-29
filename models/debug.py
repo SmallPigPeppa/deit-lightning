@@ -74,7 +74,7 @@ class OriginalAttention(nn.Module):
 # 测试运行
 if __name__ == "__main__":
     torch.manual_seed(0)
-    x = torch.randn(4, 128, 512)  # [batch_size, seq_len, dim]
+    x = torch.randn(1024, 128, 512)  # [batch_size, seq_len, dim]
 
     # 原始注意力机制
     original_attn = OriginalAttention(dim=512, num_heads=8)
