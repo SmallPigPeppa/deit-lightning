@@ -182,7 +182,7 @@ if __name__ == "__main__":
     # print(vit_model_taylor)
 
     # Compare the forward speed of the original and modified models
-    input_tensor = torch.randn(64, 3, 224, 224)  # Example input tensor
+    input_tensor = torch.randn(256, 3, 224, 224)  # Example input tensor
     compare_model_forward_speed(vit_model, vit_model_taylor, input_tensor)
 
 # if __name__ == "__main__":
