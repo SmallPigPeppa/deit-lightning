@@ -46,7 +46,7 @@ class DeiTModel(LightningModule):
 
         # Enable gradients only for TaylorAttention layers in the specified blocks
         for i, block in enumerate(model.blocks):
-            if hasattr(block, 'attn') and isinstance(block.attn, TaylorAttention) and i in target_layer_idx:
+            if hasattr(block, 'attn') and isinstance(block.attn, TaylorAttention) and i in indices_to_replace:
                 for param in block.attn.parameters():
                     param.requires_grad = True
                 print(f"Enabled gradients for block {i} 'attn' (TaylorAttention).")
