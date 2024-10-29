@@ -170,8 +170,8 @@ def compare_model_forward_speed(model1: nn.Module, model2: nn.Module, input_tens
 if __name__=="__main__":
     # Example usage:
     vit_model = vit_small_patch16_224(pretrained=True)  # Assuming you have the Vision Transformer model instance
-    num_attention_layers = count_attention_layers(vit_model)
-    print(f"Number of Attention layers: {num_attention_layers}")
+    # num_attention_layers = count_attention_layers(vit_model)
+    # print(f"Number of Attention layers: {num_attention_layers}")
     indices_to_replace = list(range(0,12))  # Example indices
     order = 1  # Taylor expansion order
     vit_model_taylor = replace_attention_with_taylor_by_index(vit_model, indices_to_replace, order)
