@@ -162,9 +162,9 @@ if __name__ == "__main__":
         taylor_time = time.time() - start_time
         print(f"Order {order} Taylor Attention Output Shape: {output_taylor.shape}, Time: {taylor_time:.6f} seconds")
 
-    # order=10
-    # taylor_attn = TaylorAttention(dim=512, num_heads=8, order=order).to(device)
-    # start_time = time.time()
-    # output_taylor = taylor_attn(x)
-    # taylor_time = time.time() - start_time
-    # print(f"Order {order} Taylor Attention Output Shape: {output_taylor.shape}, Time: {taylor_time:.6f} seconds")
+    order=5
+    taylor_attn = TaylorAttention(dim=512, num_heads=8, order=order).to(device)
+    start_time = time.time()
+    output_taylor = taylor_attn(x)
+    taylor_time = time.time() - start_time
+    print(f"Order {order} Taylor Attention Output Shape: {output_taylor.shape}, Time: {taylor_time:.6f} seconds")
