@@ -9,6 +9,9 @@ from losses import DistillationLoss
 from lightning import LightningModule
 from models.vision_transformer import vit_small_patch16_224
 from models.taylor_transfer import replace_attention_with_taylor_by_index
+from models.taylor_transferV3 import TaylorAttention
+
+
 
 
 class DeiTModel(LightningModule):
@@ -36,6 +39,17 @@ class DeiTModel(LightningModule):
         indices_to_replace = list(range(0, 1))  # Example indices
         order = 1  # Taylor expansion order
         model = replace_attention_with_taylor_by_index(model, indices_to_replace, order)
+
+        # Freeze all parameters in the model
+        for param in model.parameters():
+            param.requires_grad = False
+
+        # Enable gradients only for TaylorAttention layers in the specified blocks
+        for i, block in enumerate(model.blocks):
+            if hasattr(block, 'attn') and isinstance(block.attn, TaylorAttention) and i in target_layer_idx:
+                for param in block.attn.parameters():
+                    param.requires_grad = True
+                print(f"Enabled gradients for block {i} 'attn' (TaylorAttention).")
 
         criterion = LabelSmoothingCrossEntropy()
         mixup_fn = None
