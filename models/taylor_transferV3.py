@@ -138,7 +138,7 @@ def replace_attention_with_taylor_by_index(model, target_layer_idx, order: int =
 
 
 def compare_model_forward_speed(model1: nn.Module, model2: nn.Module, input_tensor: torch.Tensor,
-                                num_iterations: int = 100) -> None:
+                                num_iterations: int = 500) -> None:
     """
     Compare the forward computation speed of two models.
 
