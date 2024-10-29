@@ -106,63 +106,6 @@ class Attention(nn.Module):
         x = self.proj_drop(x)
         return x
 
-class TaylorAttention(nn.Module):
-    fused_attn: Final[bool]
-
-    def __init__(
-            self,
-            dim: int,
-            num_heads: int = 8,
-            order: int = 1,
-            qkv_bias: bool = False,
-            qk_norm: bool = False,
-            attn_drop: float = 0.,
-            proj_drop: float = 0.,
-            norm_layer: nn.Module = nn.LayerNorm,
-    ) -> None:
-        super().__init__()
-        assert dim % num_heads == 0, 'dim should be divisible by num_heads'
-        self.num_heads = num_heads
-        self.order = order
-        self.head_dim = dim // num_heads
-        self.scale = self.head_dim ** -0.5
-        self.fused_attn = use_fused_attn()
-
-        self.qkv = nn.Linear(dim, dim * 3, bias=qkv_bias)
-        self.q_norm = norm_layer(self.head_dim) if qk_norm else nn.Identity()
-        self.k_norm = norm_layer(self.head_dim) if qk_norm else nn.Identity()
-        self.attn_drop = nn.Dropout(attn_drop)
-        self.proj = nn.Linear(dim, dim)
-        self.proj_drop = nn.Dropout(proj_drop)
-
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
-        B, N, C = x.shape
-        qkv = self.qkv(x).reshape(B, N, 3, self.num_heads, self.head_dim).permute(2, 0, 3, 1, 4)
-        q, k, v = qkv.unbind(0)
-        q, k = self.q_norm(q), self.k_norm(k)
-
-        q = q * self.scale
-        qk_matmul = torch.matmul(q, k.transpose(-2, -1))
-        attn = torch.ones_like(qk_matmul)  # 泰勒展开初始值为 1
-        x_power = qk_matmul.clone()
-
-        for i in range(1, self.order + 1):
-            attn = attn + x_power / math.factorial(i)
-            if i < self.order:  # 避免多计算一次下一个次幂
-                x_power = x_power * qk_matmul  # 下一个次幂
-
-        attn = F.relu(attn)  # ReLU 确保非负性
-        attn = attn / attn.sum(dim=-1, keepdim=True)  # 归一化
-        attn = self.attn_drop(attn)
-        x = torch.matmul(attn, v)
-
-        x = x.transpose(1, 2).reshape(B, N, C)
-        x = self.proj(x)
-        x = self.proj_drop(x)
-        return x
-
-
-
 
 class LayerScale(nn.Module):
     def __init__(

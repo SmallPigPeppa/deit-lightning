@@ -111,7 +111,7 @@ class TaylorAttention(nn.Module):
             if i < self.order:  # 避免多计算一次下一个次幂
                 x_power = x_power * qk_matmul  # 下一个次幂
 
-        attn = F.relu(attn)  # ReLU 确保非负性
+        # attn = F.relu(attn)  # ReLU 确保非负性
         attn = attn / attn.sum(dim=-1, keepdim=True)  # 归一化
         # attn = self.attn_drop(attn)
         x = torch.matmul(attn, v)
@@ -174,7 +174,7 @@ if __name__ == "__main__":
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     device = "cpu"
-    device="cuda"
+    # device="cuda"
     x = torch.randn(64, 128, 512).to(device)  # [batch_size, seq_len, dim]
 
     # 原始注意力机制
@@ -185,7 +185,7 @@ if __name__ == "__main__":
     print(f"Original Attention Output Shape: {output_original.shape}, Time: {original_time:.6f} seconds")
 
     # 将原始注意力机制转换为泰勒注意力机制
-    taylor_attn_converted = convert_attention_to_taylor(original_attn, order=5).to(device)
+    taylor_attn_converted = convert_attention_to_taylor(original_attn, order=1).to(device)
     start_time = time.time()
     output_taylor_converted = taylor_attn_converted(x)
     taylor_converted_time = time.time() - start_time
