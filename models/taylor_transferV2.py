@@ -190,7 +190,7 @@ if __name__=="__main__":
     num_attention_layers = count_attention_layers(vit_model)
     print(f"Number of Attention layers: {num_attention_layers}")
     indices_to_replace = list(range(0,12))  # Example indices
-    order = 3  # Taylor expansion order
+    order = 1  # Taylor expansion order
     vit_model_taylor = replace_attention_with_taylor_by_index(vit_model, indices_to_replace, order)
     # print(vit_model)
     # print(vit_model_taylor)
