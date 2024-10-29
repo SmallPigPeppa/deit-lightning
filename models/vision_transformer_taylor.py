@@ -146,6 +146,7 @@ if __name__ == "__main__":
     import time
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     device="cpu"
+    device="cuda"
     x = torch.randn(1024, 128, 512).to(device)  # [batch_size, seq_len, dim]
 
     # 原始注意力机制
