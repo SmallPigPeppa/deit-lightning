@@ -132,12 +132,12 @@ class OriginalAttention(nn.Module):
             q = q * self.scale
             attn = q @ k.transpose(-2, -1)
             attn = attn.softmax(dim=-1)
-            attn = self.attn_drop(attn)
+            # attn = self.attn_drop(attn)
             x = attn @ v
 
         x = x.transpose(1, 2).reshape(B, N, C)
         x = self.proj(x)
-        x = self.proj_drop(x)
+        # x = self.proj_drop(x)
         return x
 
 # 测试运行
