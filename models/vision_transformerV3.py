@@ -97,7 +97,15 @@ class Attention(nn.Module):
         # else:
         q = q * self.scale
         attn = q @ k.transpose(-2, -1)
-        attn = attn.softmax(dim=-1)
+        # attn = attn.softmax(dim=-1)
+        # 计算每个元素的指数
+        exp_attn = torch.exp(attn)
+
+        # 对最后一个维度求和，用于归一化
+        sum_exp_attn = exp_attn.sum(dim=-1, keepdim=True)
+
+        # 归一化得到 softmax
+        attn = exp_attn / sum_exp_attn
         # attn = self.attn_drop(attn)
         x = attn @ v
 
