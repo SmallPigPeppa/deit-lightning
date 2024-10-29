@@ -9,7 +9,7 @@ python main_pl_scaleLR_ra_taylor.py \
     --model ${MODEL_NAME} \
     --batch-size 64 \
     --trainer.accelerator gpu \
-    --trainer.devices 1 \
+    --trainer.devices 2 \
     --trainer.num_nodes 1 \
     --trainer.precision 16 \
     --trainer.log_every_n_steps 1 \
