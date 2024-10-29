@@ -10,7 +10,6 @@ python main_pl_scaleLR_ra_taylor.py \
     --batch-size 64 \
     --trainer.accelerator gpu \
     --trainer.devices 2 \
-    --trainer.num_nodes 1 \
     --trainer.precision 16 \
     --trainer.log_every_n_steps 1 \
     --lr_monitor.logging_interval epoch \
