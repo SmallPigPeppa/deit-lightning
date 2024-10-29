@@ -74,10 +74,10 @@ class TaylorAttention(nn.Module):
         attn = torch.ones_like(qk_matmul)  # 泰勒展开初始值为 1
         x_power = qk_matmul.clone()
 
-        for i in range(1, self.order + 1):
-            attn = attn + x_power / math.factorial(i)
-            if i < self.order:  # 避免多计算一次下一个次幂
-                x_power = x_power * qk_matmul  # 下一个次幂
+        # for i in range(1, self.order + 1):
+        #     attn = attn + x_power / math.factorial(i)
+        #     if i < self.order:  # 避免多计算一次下一个次幂
+        #         x_power = x_power * qk_matmul  # 下一个次幂
 
         attn = F.relu(attn)  # ReLU 确保非负性
         attn = attn / attn.sum(dim=-1, keepdim=True)  # 归一化
