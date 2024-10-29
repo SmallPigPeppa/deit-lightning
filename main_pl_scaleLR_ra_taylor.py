@@ -3,7 +3,7 @@ from lightning.pytorch import cli
 from lightning.pytorch.callbacks.model_checkpoint import ModelCheckpoint
 from lightning.pytorch.callbacks.lr_monitor import LearningRateMonitor
 from lightning.pytorch.loggers import WandbLogger
-from deit_pl import DeiTModel
+from deit_pl_taylor import DeiTModel
 from lightning_dm.deit_dm import CustomDataModule
 import os
 

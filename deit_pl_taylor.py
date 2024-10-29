@@ -7,6 +7,7 @@ from timm.loss import LabelSmoothingCrossEntropy, SoftTargetCrossEntropy
 from timm.utils import accuracy
 from losses import DistillationLoss
 from lightning import LightningModule
+from models.vision_transformer import vit_small_patch16_224
 
 
 class DeiTModel(LightningModule):
@@ -21,15 +22,16 @@ class DeiTModel(LightningModule):
         self.save_hyperparameters()
 
         print(f"Creating model: {config.model}")
-        model = create_model(
-            config.model,
-            pretrained=False,
-            num_classes=config.nb_classes,
-            drop_rate=config.drop,
-            drop_path_rate=config.drop_path,
-            drop_block_rate=None,
-            img_size=config.input_size
-        )
+        # model = create_model(
+        #     config.model,
+        #     pretrained=False,
+        #     num_classes=config.nb_classes,
+        #     drop_rate=config.drop,
+        #     drop_path_rate=config.drop_path,
+        #     drop_block_rate=None,
+        #     img_size=config.input_size
+        # )
+        model = vit_small_patch16_224(pretrained=True)
 
         criterion = LabelSmoothingCrossEntropy()
         mixup_fn = None
@@ -133,7 +135,6 @@ class DeiTModel(LightningModule):
         self.log('test/acc5', acc5, sync_dist=True)
 
         return loss
-
 
     def configure_optimizers(self):
         optimizer = create_optimizer(self.args, self.model)
