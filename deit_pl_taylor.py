@@ -36,7 +36,7 @@ class DeiTModel(LightningModule):
         #     img_size=config.input_size
         # )
         model = vit_small_patch16_224(pretrained=True)
-        indices_to_replace = list(range(0, 1))  # Example indices
+        indices_to_replace = list(range(11, 12))  # Example indices
         order = 1  # Taylor expansion order
         model = replace_attention_with_taylor_by_index(model, indices_to_replace, order)
 
