@@ -3,9 +3,9 @@ MODEL_NAME=deit_small_patch16_224
 
 python main_pl_scaleLR_ra_taylor.py \
     --epochs 5 \
-    --lr 1e-6 \
-    --warmup-lr 5e-7 \
-    --min-lr 5e-7 \
+    --lr 5e-4 \
+    --warmup-lr 5e-4 \
+    --min-lr 5e-4 \
     --seed 3407 \
     --project DeiT-PL-Taylor \
     --name ${MODEL_NAME}-REPRO-YD-RA \
